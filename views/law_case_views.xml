@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- LIST VIEW (Odoo 18 uses <list>, not <tree>) -->
+    <record id="law_case_view_list" model="ir.ui.view">
+        <field name="name">law.case.list</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('closed', 'cancelled')" decoration-danger="priority == '2'">
+                <field name="priority" widget="priority" optional="show"/>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="client_id"/>
+                <field name="lawyer_id" widget="many2one_avatar_user"/>
+                <field name="case_type_id"/>
+                <field name="court_id" optional="show"/>
+                <field name="next_hearing_date" optional="show"/>
+                <field name="date_open" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'open'"
+                       decoration-warning="state == 'on_hold'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW -->
+    <record id="law_case_view_form" model="ir.ui.view">
+        <field name="name">law.case.form</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <form string="Legal Case">
+                <header>
+                    <button name="action_open" type="object" string="Start Case"
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_hold" type="object" string="Put On Hold"
+                            invisible="state != 'open'"/>
+                    <button name="action_open" type="object" string="Resume"
+                            class="oe_highlight" invisible="state != 'on_hold'"/>
+                    <button name="action_close" type="object" string="Close Case"
+                            invisible="state not in ('open', 'on_hold')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed', 'cancelled')"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft"
+                            invisible="state not in ('closed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_hearings" type="object"
+                                class="oe_stat_button" icon="fa-gavel">
+                            <field name="hearing_count" widget="statinfo" string="Hearings"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Closed" bg_color="text-bg-success"
+                            invisible="state != 'closed'"/>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger"
+                            invisible="state != 'cancelled'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="priority" widget="priority" class="me-3"/>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="title" placeholder="e.g. Contract dispute with ABC Company"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group string="Parties">
+                            <field name="client_id" context="{'default_is_law_client': True}"/>
+                            <field name="opposing_party"/>
+                            <field name="opposing_lawyer"/>
+                        </group>
+                        <group string="Case Information">
+                            <field name="case_type_id" options="{'no_create': True}"/>
+                            <field name="court_id"/>
+                            <field name="lawyer_id" widget="many2one_avatar_user"/>
+                            <field name="assistant_ids" widget="many2many_avatar_user"/>
+                            <field name="date_open"/>
+                            <field name="date_close" invisible="not date_close"/>
+                            <field name="outcome" invisible="state not in ('open', 'on_hold', 'closed')"/>
+                            <field name="next_hearing_date" invisible="not next_hearing_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Case facts, strategy, important notes..."/>
+                        </page>
+                        <page string="Hearings" name="hearings">
+                            <field name="hearing_ids" context="{'default_case_id': id}">
+                                <list editable="bottom" decoration-muted="state in ('done', 'cancelled')">
+                                    <field name="date_hearing"/>
+                                    <field name="name"/>
+                                    <field name="court_id"/>
+                                    <field name="lawyer_id" widget="many2one_avatar_user"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Fees" name="fees">
+                            <group>
+                                <group>
+                                    <field name="fee_type"/>
+                                    <field name="fee_amount"/>
+                                    <field name="currency_id"/>
+                                </group>
+                                <group>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- KANBAN VIEW (Odoo 18 "card" template) -->
+    <record id="law_case_view_kanban" model="ir.ui.view">
+        <field name="name">law.case.kanban</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false" sample="1">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="name" class="fw-bold"/>
+                            <field name="priority" widget="priority" class="ms-auto"/>
+                        </div>
+                        <field name="title"/>
+                        <field name="client_id" class="text-muted"/>
+                        <field name="case_type_id" class="small"/>
+                        <footer>
+                            <field name="next_hearing_date" class="small"/>
+                            <div class="ms-auto">
+                                <field name="lawyer_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="law_case_view_search" model="ir.ui.view">
+        <field name="name">law.case.search</field>
+        <field name="model">law.case</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="client_id"/>
+                <field name="lawyer_id"/>
+                <field name="court_id"/>
+                <filter name="my_cases" string="My Cases" domain="[('lawyer_id', '=', uid)]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="open" string="In Progress" domain="[('state', '=', 'open')]"/>
+                <filter name="on_hold" string="On Hold" domain="[('state', '=', 'on_hold')]"/>
+                <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter name="urgent" string="Urgent" domain="[('priority', '=', '2')]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_lawyer" string="Lawyer" context="{'group_by': 'lawyer_id'}"/>
+                    <filter name="group_type" string="Case Type" context="{'group_by': 'case_type_id'}"/>
+                    <filter name="group_court" string="Court" context="{'group_by': 'court_id'}"/>
+                    <filter name="group_client" string="Client" context="{'group_by': 'client_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="law_case_action" model="ir.actions.act_window">
+        <field name="name">Cases</field>
+        <field name="res_model">law.case</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="law_case_view_search"/>
+        <field name="context">{'search_default_my_cases': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first legal case</p>
+            <p>Track clients, courts, hearings and fees in one place.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_law_case_user,law.case.user,model_law_case,group_law_user,1,1,1,0
+access_law_case_manager,law.case.manager,model_law_case,group_law_manager,1,1,1,1
+access_law_hearing_user,law.hearing.user,model_law_hearing,group_law_user,1,1,1,0
+access_law_hearing_manager,law.hearing.manager,model_law_hearing,group_law_manager,1,1,1,1
+access_law_case_type_user,law.case.type.user,model_law_case_type,group_law_user,1,0,0,0
+access_law_case_type_manager,law.case.type.manager,model_law_case_type,group_law_manager,1,1,1,1
+access_law_court_user,law.court.user,model_law_court,group_law_user,1,0,0,0
+access_law_court_manager,law.court.manager,model_law_court,group_law_manager,1,1,1,1

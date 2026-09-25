@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Case Types: simple editable list -->
+    <record id="law_case_type_view_list" model="ir.ui.view">
+        <field name="name">law.case.type.list</field>
+        <field name="model">law.case.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="law_case_type_action" model="ir.actions.act_window">
+        <field name="name">Case Types</field>
+        <field name="res_model">law.case.type</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Courts -->
+    <record id="law_court_view_list" model="ir.ui.view">
+        <field name="name">law.court.list</field>
+        <field name="model">law.court</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="court_type"/>
+                <field name="city"/>
+                <field name="phone"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="law_court_view_form" model="ir.ui.view">
+        <field name="name">law.court.form</field>
+        <field name="model">law.court</field>
+        <field name="arch" type="xml">
+            <form string="Court">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Riyadh General Court"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="court_type"/>
+                            <field name="city"/>
+                        </group>
+                        <group>
+                            <field name="phone" widget="phone"/>
+                            <field name="address"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="law_court_action" model="ir.actions.act_window">
+        <field name="name">Courts</field>
+        <field name="res_model">law.court</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

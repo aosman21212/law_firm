@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Demo data: loads only when the database is created with demo data enabled.
+        Dates are relative to the install date, so the calendar always has
+        past and upcoming hearings no matter when the module is installed.
+    -->
+
+    <!-- ============================ COURTS ============================ -->
+    <record id="demo_court_general" model="law.court">
+        <field name="name">Riyadh General Court</field>
+        <field name="court_type">general</field>
+        <field name="city">Riyadh</field>
+        <field name="phone">+966 11 401 0000</field>
+        <field name="address">King Fahd Road, Riyadh, Saudi Arabia</field>
+    </record>
+
+    <record id="demo_court_commercial" model="law.court">
+        <field name="name">Riyadh Commercial Court</field>
+        <field name="court_type">commercial</field>
+        <field name="city">Riyadh</field>
+        <field name="phone">+966 11 402 1111</field>
+        <field name="address">Olaya District, Riyadh, Saudi Arabia</field>
+    </record>
+
+    <record id="demo_court_labor" model="law.court">
+        <field name="name">Jeddah Labor Court</field>
+        <field name="court_type">labor</field>
+        <field name="city">Jeddah</field>
+        <field name="phone">+966 12 651 2222</field>
+        <field name="address">Al Andalus District, Jeddah, Saudi Arabia</field>
+    </record>
+
+    <record id="demo_court_appeal" model="law.court">
+        <field name="name">Court of Appeal - Riyadh</field>
+        <field name="court_type">appeal</field>
+        <field name="city">Riyadh</field>
+        <field name="phone">+966 11 403 3333</field>
+        <field name="address">Al Murabba, Riyadh, Saudi Arabia</field>
+    </record>
+
+    <!-- ============================ LAWYERS ===========================
+         Demo logins. Passwords match the login, as in Odoo's own demo data.
+         Demo data never loads into a production install.
+    -->
+    <record id="demo_user_sara" model="res.users">
+        <field name="name">Sara Al-Otaibi</field>
+        <field name="login">sara</field>
+        <field name="password">sara</field>
+        <field name="groups_id" eval="[(4, ref('group_law_manager'))]"/>
+    </record>
+
+    <record id="demo_user_khalid" model="res.users">
+        <field name="name">Khalid Nasser</field>
+        <field name="login">khalid</field>
+        <field name="password">khalid</field>
+        <field name="groups_id" eval="[(4, ref('group_law_user'))]"/>
+    </record>
+
+    <record id="demo_user_nora" model="res.users">
+        <field name="name">Nora Farouk</field>
+        <field name="login">nora</field>
+        <field name="password">nora</field>
+        <field name="groups_id" eval="[(4, ref('group_law_user'))]"/>
+    </record>
+
+    <!-- ============================ CLIENTS =========================== -->
+    <record id="demo_client_abc" model="res.partner">
+        <field name="name">ABC Trading Company</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_law_client" eval="True"/>
+        <field name="phone">+966 11 500 1000</field>
+        <field name="city">Riyadh</field>
+    </record>
+
+    <record id="demo_client_delta" model="res.partner">
+        <field name="name">Delta Construction LLC</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_law_client" eval="True"/>
+        <field name="phone">+966 11 500 2000</field>
+        <field name="city">Riyadh</field>
+    </record>
+
+    <record id="demo_client_hamad" model="res.partner">
+        <field name="name">Hamad Al-Sayed</field>
+        <field name="is_company" eval="False"/>
+        <field name="is_law_client" eval="True"/>
+        <field name="phone">+966 55 111 2233</field>
+        <field name="city">Riyadh</field>
+    </record>
+
+    <record id="demo_client_layla" model="res.partner">
+        <field name="name">Layla Ibrahim</field>
+        <field name="is_company" eval="False"/>
+        <field name="is_law_client" eval="True"/>
+        <field name="phone">+966 55 444 5566</field>
+        <field name="city">Jeddah</field>
+    </record>
+
+    <record id="demo_client_nova" model="res.partner">
+        <field name="name">Nova Logistics</field>
+        <field name="is_company" eval="True"/>
+        <field name="is_law_client" eval="True"/>
+        <field name="phone">+966 12 700 3000</field>
+        <field name="city">Jeddah</field>
+    </record>
+
+    <!-- ============================= CASES ============================
+         'name' is left out on purpose: the create() override fills it from
+         the law.case sequence, so demo cases get real CASE/YYYY/NNNNN refs.
+    -->
+
+    <!-- In progress -->
+    <record id="demo_case_invoices" model="law.case">
+        <field name="title">Unpaid invoices against Delta Construction</field>
+        <field name="client_id" ref="demo_client_abc"/>
+        <field name="lawyer_id" ref="demo_user_sara"/>
+        <field name="assistant_ids" eval="[(6, 0, [ref('demo_user_khalid')])]"/>
+        <field name="case_type_id" ref="case_type_commercial"/>
+        <field name="court_id" ref="demo_court_commercial"/>
+        <field name="priority">2</field>
+        <field name="state">open</field>
+        <field name="opposing_party">Delta Construction LLC</field>
+        <field name="opposing_lawyer">Mansour Legal Group</field>
+        <field name="fee_type">contingency</field>
+        <field name="fee_amount">450000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-120)).strftime('%Y-%m-%d')"/>
+        <field name="description"><![CDATA[<p>Client seeks recovery of 12 unpaid invoices dated 2025-2026.</p>]]></field>
+    </record>
+
+    <record id="demo_case_termination" model="law.case">
+        <field name="title">Employee termination dispute</field>
+        <field name="client_id" ref="demo_client_delta"/>
+        <field name="lawyer_id" ref="demo_user_khalid"/>
+        <field name="assistant_ids" eval="[(6, 0, [ref('demo_user_nora')])]"/>
+        <field name="case_type_id" ref="case_type_labor"/>
+        <field name="court_id" ref="demo_court_labor"/>
+        <field name="priority">1</field>
+        <field name="state">open</field>
+        <field name="opposing_party">Former employee M. Rashid</field>
+        <field name="fee_type">hourly</field>
+        <field name="fee_amount">1200</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-75)).strftime('%Y-%m-%d')"/>
+        <field name="description"><![CDATA[<p>Wrongful termination claim filed with the labor court.</p>]]></field>
+    </record>
+
+    <record id="demo_case_lease" model="law.case">
+        <field name="title">Lease agreement review and dispute</field>
+        <field name="client_id" ref="demo_client_hamad"/>
+        <field name="lawyer_id" ref="demo_user_nora"/>
+        <field name="case_type_id" ref="case_type_real_estate"/>
+        <field name="court_id" ref="demo_court_general"/>
+        <field name="priority">0</field>
+        <field name="state">open</field>
+        <field name="fee_type">fixed</field>
+        <field name="fee_amount">25000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-45)).strftime('%Y-%m-%d')"/>
+        <field name="description"><![CDATA[<p>Landlord refuses to return the security deposit.</p>]]></field>
+    </record>
+
+    <!-- On hold -->
+    <record id="demo_case_supply" model="law.case">
+        <field name="title">Supply contract breach</field>
+        <field name="client_id" ref="demo_client_nova"/>
+        <field name="lawyer_id" ref="demo_user_sara"/>
+        <field name="assistant_ids" eval="[(6, 0, [ref('demo_user_khalid'), ref('demo_user_nora')])]"/>
+        <field name="case_type_id" ref="case_type_commercial"/>
+        <field name="court_id" ref="demo_court_commercial"/>
+        <field name="priority">1</field>
+        <field name="state">on_hold</field>
+        <field name="opposing_party">Gulf Freight Partners</field>
+        <field name="fee_type">fixed</field>
+        <field name="fee_amount">180000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-200)).strftime('%Y-%m-%d')"/>
+        <field name="description"><![CDATA[<p>On hold pending the outcome of settlement talks.</p>]]></field>
+    </record>
+
+    <!-- Draft -->
+    <record id="demo_case_inheritance" model="law.case">
+        <field name="title">Family inheritance settlement</field>
+        <field name="client_id" ref="demo_client_layla"/>
+        <field name="lawyer_id" ref="demo_user_nora"/>
+        <field name="case_type_id" ref="case_type_family"/>
+        <field name="court_id" ref="demo_court_general"/>
+        <field name="priority">0</field>
+        <field name="state">draft</field>
+        <field name="fee_type">fixed</field>
+        <field name="fee_amount">60000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-5)).strftime('%Y-%m-%d')"/>
+        <field name="description"><![CDATA[<p>Initial consultation completed, awaiting documents.</p>]]></field>
+    </record>
+
+    <record id="demo_case_trademark" model="law.case">
+        <field name="title">Trademark infringement claim</field>
+        <field name="client_id" ref="demo_client_abc"/>
+        <field name="lawyer_id" ref="demo_user_khalid"/>
+        <field name="case_type_id" ref="case_type_civil"/>
+        <field name="court_id" ref="demo_court_general"/>
+        <field name="priority">1</field>
+        <field name="state">draft</field>
+        <field name="fee_type">hourly</field>
+        <field name="fee_amount">900</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-2)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Closed -->
+    <record id="demo_case_shareholder" model="law.case">
+        <field name="title">Shareholder dispute - resolved</field>
+        <field name="client_id" ref="demo_client_nova"/>
+        <field name="lawyer_id" ref="demo_user_sara"/>
+        <field name="assistant_ids" eval="[(6, 0, [ref('demo_user_khalid')])]"/>
+        <field name="case_type_id" ref="case_type_commercial"/>
+        <field name="court_id" ref="demo_court_appeal"/>
+        <field name="priority">2</field>
+        <field name="state">closed</field>
+        <field name="outcome">won</field>
+        <field name="opposing_party">Minority shareholder group</field>
+        <field name="fee_type">contingency</field>
+        <field name="fee_amount">750000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-400)).strftime('%Y-%m-%d')"/>
+        <field name="date_close" eval="(DateTime.now() + relativedelta(days=-55)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <record id="demo_case_debt" model="law.case">
+        <field name="title">Debt recovery - settled out of court</field>
+        <field name="client_id" ref="demo_client_delta"/>
+        <field name="lawyer_id" ref="demo_user_khalid"/>
+        <field name="case_type_id" ref="case_type_civil"/>
+        <field name="court_id" ref="demo_court_general"/>
+        <field name="priority">0</field>
+        <field name="state">closed</field>
+        <field name="outcome">settled</field>
+        <field name="fee_type">fixed</field>
+        <field name="fee_amount">90000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-300)).strftime('%Y-%m-%d')"/>
+        <field name="date_close" eval="(DateTime.now() + relativedelta(days=-120)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Cancelled -->
+    <record id="demo_case_withdrawn" model="law.case">
+        <field name="title">Contract review - client withdrew</field>
+        <field name="client_id" ref="demo_client_hamad"/>
+        <field name="lawyer_id" ref="demo_user_nora"/>
+        <field name="case_type_id" ref="case_type_commercial"/>
+        <field name="court_id" ref="demo_court_commercial"/>
+        <field name="priority">0</field>
+        <field name="state">cancelled</field>
+        <field name="fee_type">fixed</field>
+        <field name="fee_amount">15000</field>
+        <field name="date_open" eval="(DateTime.now() + relativedelta(days=-150)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- =========================== HEARINGS ===========================
+         court_id and lawyer_id are computed from the case, so they are
+         deliberately left out here.
+    -->
+
+    <!-- Past -->
+    <record id="demo_hearing_invoices_1" model="law.hearing">
+        <field name="name">First hearing - statement of claim</field>
+        <field name="case_id" ref="demo_case_invoices"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=-90, hour=9, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">2.0</field>
+        <field name="state">done</field>
+        <field name="result">Claim accepted, defendant given 30 days to respond.</field>
+    </record>
+
+    <record id="demo_hearing_invoices_2" model="law.hearing">
+        <field name="name">Second hearing - evidence review</field>
+        <field name="case_id" ref="demo_case_invoices"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=-35, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.5</field>
+        <field name="state">done</field>
+        <field name="result">Invoices submitted as evidence.</field>
+    </record>
+
+    <record id="demo_hearing_termination_1" model="law.hearing">
+        <field name="name">Preliminary labor hearing</field>
+        <field name="case_id" ref="demo_case_termination"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=-50, hour=11, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.0</field>
+        <field name="state">done</field>
+        <field name="result">Mediation attempted, no agreement reached.</field>
+    </record>
+
+    <record id="demo_hearing_shareholder_1" model="law.hearing">
+        <field name="name">Appeal hearing - final</field>
+        <field name="case_id" ref="demo_case_shareholder"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=-60, hour=9, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">3.0</field>
+        <field name="state">done</field>
+        <field name="result">Judgment in favour of our client.</field>
+    </record>
+
+    <record id="demo_hearing_supply_1" model="law.hearing">
+        <field name="name">Settlement conference</field>
+        <field name="case_id" ref="demo_case_supply"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=-20, hour=13, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.0</field>
+        <field name="state">postponed</field>
+        <field name="result">Postponed at the request of opposing counsel.</field>
+    </record>
+
+    <!-- Upcoming -->
+    <record id="demo_hearing_invoices_3" model="law.hearing">
+        <field name="name">Third hearing - defendant response</field>
+        <field name="case_id" ref="demo_case_invoices"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=8, hour=9, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">2.0</field>
+    </record>
+
+    <record id="demo_hearing_invoices_4" model="law.hearing">
+        <field name="name">Witness testimony</field>
+        <field name="case_id" ref="demo_case_invoices"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=29, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">2.5</field>
+    </record>
+
+    <record id="demo_hearing_termination_2" model="law.hearing">
+        <field name="name">Labor court - second session</field>
+        <field name="case_id" ref="demo_case_termination"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=15, hour=11, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.5</field>
+    </record>
+
+    <record id="demo_hearing_termination_3" model="law.hearing">
+        <field name="name">Expert report presentation</field>
+        <field name="case_id" ref="demo_case_termination"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=55, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">2.0</field>
+    </record>
+
+    <record id="demo_hearing_lease_1" model="law.hearing">
+        <field name="name">Lease dispute - first hearing</field>
+        <field name="case_id" ref="demo_case_lease"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=22, hour=9, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.0</field>
+    </record>
+
+    <record id="demo_hearing_supply_2" model="law.hearing">
+        <field name="name">Resumed settlement conference</field>
+        <field name="case_id" ref="demo_case_supply"/>
+        <field name="date_hearing" eval="(DateTime.now() + relativedelta(days=40, hour=13, minute=0, second=0, microsecond=0))"/>
+        <field name="duration">1.5</field>
+    </record>
+</odoo>

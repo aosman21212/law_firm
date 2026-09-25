@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the standard contact form -->
+    <record id="res_partner_view_form_inherit_law" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.law</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_law_cases" type="object"
+                        class="oe_stat_button" icon="fa-balance-scale"
+                        invisible="law_case_count == 0">
+                    <field name="law_case_count" widget="statinfo" string="Cases"/>
+                </button>
+            </xpath>
+            <field name="category_id" position="after">
+                <field name="is_law_client"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Clients menu: contacts flagged as law clients -->
+    <record id="law_client_action" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_law_client', '=', True)]</field>
+        <field name="context">{'default_is_law_client': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first client</p>
+        </field>
+    </record>
+</odoo>

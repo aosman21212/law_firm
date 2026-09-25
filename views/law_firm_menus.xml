@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_law_firm_root" name="Law Firm"
+              web_icon="law_firm,static/description/icon.png"
+              groups="group_law_user" sequence="10"/>
+
+    <menuitem id="menu_law_operations" name="Cases"
+              parent="menu_law_firm_root" sequence="10"/>
+    <menuitem id="menu_law_case" name="Cases" parent="menu_law_operations"
+              action="law_case_action" sequence="10"/>
+    <menuitem id="menu_law_hearing" name="Hearings" parent="menu_law_operations"
+              action="law_hearing_action" sequence="20"/>
+
+    <menuitem id="menu_law_client" name="Clients" parent="menu_law_firm_root"
+              action="law_client_action" sequence="20"/>
+
+    <menuitem id="menu_law_config" name="Configuration" parent="menu_law_firm_root"
+              groups="group_law_manager" sequence="100"/>
+    <menuitem id="menu_law_case_type" name="Case Types" parent="menu_law_config"
+              action="law_case_type_action" sequence="10"/>
+    <menuitem id="menu_law_court" name="Courts" parent="menu_law_config"
+              action="law_court_action" sequence="20"/>
+</odoo>
